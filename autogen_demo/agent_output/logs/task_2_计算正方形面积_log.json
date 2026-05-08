@@ -1,0 +1,14 @@
+{
+  "task_id": 2,
+  "time": "2026-05-07 11:42:46",
+  "task_name": "计算正方形面积",
+  "task_content": "计算正方形面积",
+  "status": "SUCCESS",
+  "message": "全流程执行成功",
+  "cost_time_sec": 0.06,
+  "input_tokens": 169,
+  "output_tokens": 423,
+  "total_tokens": 592,
+  "task_cost_yuan": 0.000719,
+  "price_rule": "输入:0.0005/千Token 输出:0.0015/千Token"
+}

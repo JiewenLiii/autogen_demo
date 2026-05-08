@@ -1,0 +1,122 @@
+[
+  {
+    "role": "user",
+    "content": "写一个编程计算长方形面积",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```python\ndef add(a, b):\n    return a + b\n\nprint(add(3, 5))\n```",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "编写一个程序，计算长方形面积",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```python\n# 输入长和宽\nlength = float(input(\"请输入长方形的长: \"))\nwidth = float(input(\"请输入长方",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "以C++形式编写这个代码",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    double length,",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "进一步修正代码",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    double length,",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "编写一个计算长方形面积的程序",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    double length,",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "使用Python编写",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```python\nlength = float(input(\"请输入长方形的长：\"))\nwidth = float(input(\"请输入长方形的宽：\"))\na",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "使用Java编写",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```java\nimport java.util.Scanner;\n\npublic class RectangleArea {\n    public stati",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "请给出测试用例",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "| 测试场景 | 输入 (长, 宽) | 预期输出 | 说明 |\n|----------|---------------|----------|------|",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "编写一个1-100数字炸弹游戏的编程",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```cpp\n#include <iostream>\n#include <cstdlib>\n#include <ctime>\n\nint main() {",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "要求生成测试用例",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "| 测试场景 | 输入 | 预期输出 | 说明 |\n| :--- | :--- | :--- | :--- |\n| 第一次猜中炸弹数字（假设炸弹为50） | 5",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "在原有的基础上进一步优化代码！",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```cpp\n#include <iostream>\n#include <random>\n#include <limits>\n#include <string>",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "user",
+    "content": "修改代码中的错误",
+    "time": "2026-05-08 17:21:01"
+  },
+  {
+    "role": "bot",
+    "content": "```cpp\n#include <iostream>\nint main() {\n    std::cout << \"Hello, world!\" << std:",
+    "time": "2026-05-08 17:21:01"
+  }
+]

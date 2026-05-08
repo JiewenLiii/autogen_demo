@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI智能助手</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #36b37e;
+        --primary-light: #d1fae5;
+        --bg: #f8fbf9;
+        --card: #ffffff;
+        --text: #1e293b;
+        --text-secondary: #64748b;
+        --border: #e2e8f0;
+        --hover: #f1f5f9;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+        --red: #ef4444;
+      }
+
+      .dark {
+        --primary: #4cd995;
+        --primary-light: #064e3b;
+        --bg: #121a17;
+        --card: #1c2723;
+        --text: #f0fdf4;
+        --text-secondary: #94a3b8;
+        --border: #2d3a35;
+        --hover: #2d3a35;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Microsoft YaHei", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        transition: all 0.3s ease;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        height: 100vh;
+        gap: 0;
+      }
+
+      .sidebar {
+        background: var(--card);
+        border-right: 1px solid var(--border);
+        padding: 20px;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--card);
+      }
+
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .section {
+        margin-bottom: 24px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+
+      .collapse-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        font-size: 12px;
+      }
+
+      .collapse-btn.rotated {
+        transform: rotate(180deg);
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .status-item {
+        background: var(--bg);
+        padding: 12px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+      }
+
+      .status-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+      }
+
+      .status-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: var(--radius);
+        border: none;
+        background: linear-gradient(135deg, var(--primary), #2da874);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+      }
+
+      .btn-red {
+        background: var(--red);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .task-list-container {
+        max-height: 300px;
+        overflow-y: auto;
+        transition: max-height 0.3s ease;
+      }
+
+      .task-list-container.collapsed {
+        max-height: 0;
+        overflow: hidden;
+      }
+
+      .task-item {
+        padding: 10px 12px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 6px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+
+      .task-item:hover {
+        background: var(--hover);
+        border-color: var(--primary);
+      }
+
+      .task-item.active {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+        font-weight: 500;
+      }
+
+      .task-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+
+      .del-btn {
+        background: none;
+        border: none;
+        color: var(--red);
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .chat-box {
+        flex: 1;
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 20px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        border: 1px solid var(--border);
+        scrollbar-width: thin;
+      }
+
+      .msg-bubble {
+        max-width: 85%;
+        margin-bottom: 16px;
+        padding: 12px 16px;
+        border-radius: var(--radius);
+        animation: fadeIn 0.3s ease;
+        line-height: 1.7;
+      }
+
+      .user-msg {
+        background: linear-gradient(135deg, var(--primary), #2da874);
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+      }
+
+      .bot-msg {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        margin-right: auto;
+        border-bottom-left-radius: 4px;
+      }
+
+      .msg-header {
+        font-size: 12px;
+        margin-bottom: 6px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .msg-time {
+        font-size: 11px;
+        color: var(--text-secondary);
+        font-weight: 400;
+      }
+
+      .msg-content {
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      /* 核心修改：移除代码深色背景，统一页面浅色风格 */
+      .msg-content pre {
+        background: var(--hover) !important;
+        color: var(--text) !important;
+        padding: 16px !important;
+        border-radius: 8px !important;
+        overflow-x: auto !important;
+        margin: 12px 0 !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+        border: 1px solid var(--border) !important;
+      }
+
+      .msg-content code {
+        background: var(--hover) !important;
+        color: var(--text) !important;
+        padding: 3px 8px !important;
+        border-radius: 4px !important;
+        font-family: Consolas, Monaco, monospace !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+      }
+
+      .dark .msg-content pre {
+        background: var(--card) !important;
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+      }
+
+      .dark .msg-content code {
+        background: var(--hover) !important;
+        color: var(--text) !important;
+      }
+
+      .msg-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .action-btn {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .action-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .input-box {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+
+      #msgInput {
+        flex: 1;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-size: 14px;
+        resize: none;
+        height: 60px;
+        max-height: 120px;
+        font-family: inherit;
+        transition: border-color 0.2s ease;
+      }
+
+      #msgInput:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .send-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--radius);
+        background: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .send-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .send-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: var(--card);
+        color: var(--text);
+        padding: 12px 24px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        font-size: 14px;
+        z-index: 9999;
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--hover) 25%,
+          var(--border) 50%,
+          var(--hover) 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton 1.5s infinite;
+        border-radius: var(--radius);
+        height: 80px;
+        margin-bottom: 16px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes skeleton {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-right: 6px;
+      }
+
+      .badge-code {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      .badge-doc {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      .file-link {
+        display: inline-block;
+        margin: 4px 8px 4px 0;
+        padding: 6px 12px;
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: 6px;
+        font-size: 12px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: 1px solid var(--primary);
+      }
+
+      .file-link:hover {
+        background: var(--primary);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="sidebar">
+        <div class="section">
+          <div class="section-title">状态面板</div>
+          <div class="status-grid">
+            <div class="status-item">
+              <div class="status-label">任务ID</div>
+              <div class="status-value" id="taskId">-</div>
+            </div>
+            <div class="status-item">
+              <div class="status-label">Token</div>
+              <div class="status-value" id="nowTok">-</div>
+            </div>
+            <div class="status-item">
+              <div class="status-label">单次费用</div>
+              <div class="status-value" id="nowCost">0.00</div>
+            </div>
+            <div class="status-item">
+              <div class="status-label">耗时(s)</div>
+              <div class="status-value" id="costTime">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <button class="btn" onclick="newSession()">新建会话</button>
+          <button class="btn btn-outline" onclick="toggleTheme()">
+            切换主题
+          </button>
+          <button class="btn btn-outline" onclick="exportChat()">
+            导出对话
+          </button>
+          <button class="btn btn-outline" onclick="showHelp()">帮助</button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">
+            历史任务
+            <button
+              class="collapse-btn"
+              id="taskCollapseBtn"
+              onclick="toggleTaskList()"
+            >
+              ▼
+            </button>
+          </div>
+          <div id="taskListContainer" class="task-list-container">
+            <div id="taskList">加载中...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="header">
+          <div class="logo">AI智能助手</div>
+        </div>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="input-box">
+          <textarea id="msgInput" placeholder="请输入你的需求..."></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let sending = false;
+      let activeTaskId = 0;
+
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+      }
+
+      function showToast(text) {
+        const toast = $("toast");
+        toast.textContent = text;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 1500);
+      }
+
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        localStorage.setItem(
+          "theme",
+          document.body.classList.contains("dark") ? "dark" : "light",
+        );
+        showToast("主题切换成功");
+      }
+
+      function scrollBottom() {
+        const box = $("chatBox");
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function toggleTaskList() {
+        const container = $("taskListContainer");
+        const btn = $("taskCollapseBtn");
+        container.classList.toggle("collapsed");
+        btn.classList.toggle("rotated");
+        localStorage.setItem(
+          "taskCollapsed",
+          container.classList.contains("collapsed"),
+        );
+      }
+
+      async function newSession() {
+        try {
+          const res = await fetch("/clear", { method: "POST" });
+          const data = await res.json();
+          $("chatBox").innerHTML = "";
+          activeTaskId = 0;
+          showToast(data.msg || "新建会话成功");
+          loadTasks();
+        } catch (err) {
+          showToast("操作失败");
+        }
+      }
+
+      async function loadTasks() {
+        try {
+          const res = await fetch("/task/list");
+          const tasks = await res.json();
+          const list = $("taskList");
+          if (tasks.length === 0) {
+            list.innerHTML =
+              '<div style="color:var(--text-secondary);font-size:13px;">暂无任务</div>';
+            return;
+          }
+          list.innerHTML = tasks
+            .map(
+              (t) => `
+          <div class="task-item ${t.id == activeTaskId ? "active" : ""}" onclick="loadTaskSession(${t.id})">
+            <div class="task-name">${t.name}</div>
+            <button class="del-btn" onclick="delTask(${t.id}, event)">删除</button>
+          </div>
+        `,
+            )
+            .join("");
+        } catch (err) {
+          $("taskList").innerHTML = "加载失败";
+        }
+      }
+
+      async function loadTaskSession(tid) {
+        $("chatBox").innerHTML = '<div class="skeleton"></div>';
+        try {
+          if (!tid || tid <= 0) throw new Error("无效的任务ID");
+
+          const loadRes = await fetch("/task/load", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ task_id: tid }),
+          });
+          if (!loadRes.ok) throw new Error(`请求失败：${loadRes.status}`);
+
+          const loadData = await loadRes.json();
+          if (!loadData.ok) throw new Error(loadData.error || "任务加载失败");
+
+          const chatRes = await fetch(`/task/chat/${tid}`);
+          if (!chatRes.ok)
+            throw new Error(`聊天记录加载失败：${chatRes.status}`);
+
+          const chat = await chatRes.json();
+          const validChat = Array.isArray(chat) ? chat : [];
+
+          activeTaskId = tid;
+          renderChat(validChat);
+          loadTasks();
+          showToast("任务加载成功");
+        } catch (err) {
+          console.error("加载任务错误：", err);
+          $("chatBox").innerHTML = "";
+          showToast(`加载失败：${err.message}`);
+        }
+      }
+
+      async function delTask(id, e) {
+        e.stopPropagation();
+        if (!confirm("确定删除该任务？")) return;
+        try {
+          const res = await fetch("/task/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: id }),
+          });
+          const data = await res.json();
+          showToast(data.msg || "删除成功");
+          if (id == activeTaskId) {
+            $("chatBox").innerHTML = "";
+            activeTaskId = 0;
+          }
+          loadTasks();
+        } catch (err) {
+          showToast("删除失败");
+        }
+      }
+
+      async function sendMsg() {
+        const input = $("msgInput");
+        const text = input.value.trim();
+        if (!text || sending) return;
+
+        sending = true;
+        $("sendBtn").disabled = true;
+        input.value = "";
+        renderMsg("user", text);
+        $("chatBox").innerHTML += '<div class="skeleton"></div>';
+        scrollBottom();
+
+        try {
+          const res = await fetch("/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ msg: text }),
+          });
+          const data = await res.json();
+          document.querySelectorAll(".skeleton").forEach((s) => s.remove());
+
+          if (data.code === 0) {
+            renderBotMsg(data.data);
+            updatePanel(data.data);
+          } else {
+            renderMsg("bot", `❌ ${data.msg}`);
+          }
+        } catch (err) {
+          document.querySelectorAll(".skeleton").forEach((s) => s.remove());
+          renderMsg("bot", "网络错误，请重试");
+        } finally {
+          sending = false;
+          $("sendBtn").disabled = false;
+          scrollBottom();
+          loadTasks();
+        }
+      }
+
+      function renderMsg(role, content) {
+        const div = document.createElement("div");
+        div.className = `msg-bubble ${role}-msg`;
+        const time = new Date().toLocaleTimeString();
+        // 移除用户/助手图标
+        const roleText = role === "user" ? "用户" : "助手";
+        div.innerHTML = `
+        <div class="msg-header">
+          ${roleText}
+          <span class="msg-time">${time}</span>
+        </div>
+        <div class="msg-content">${marked.parse(content)}</div>
+      `;
+        $("chatBox").appendChild(div);
+        if (typeof hljs !== "undefined" && hljs && hljs.highlightAll) {
+          hljs.highlightAll();
+        }
+        scrollBottom();
+      }
+
+      function renderBotMsg(data) {
+        const div = document.createElement("div");
+        div.className = "msg-bubble bot-msg";
+        const time = new Date().toLocaleTimeString();
+
+        let files = "";
+        if (data.save_paths && data.save_paths.length > 0) {
+          files = data.save_paths
+            .map(
+              (p) => `
+          <a href="/preview?path=${p}" target="_blank" class="file-link">预览</a>
+          <a href="/download?path=${p}" download class="file-link">下载</a>
+        `,
+            )
+            .join("");
+        }
+
+        div.innerHTML = `
+        <div class="msg-header">
+          <span class="badge ${data.type_name === "编程任务" ? "badge-code" : "badge-doc"}">${data.type_name}</span>
+          助手
+          <span class="msg-time">${time}</span>
+        </div>
+        <div class="msg-content">${marked.parse(data.content)}</div>
+        ${data.code_check ? `<div style="font-size:12px;color:var(--primary);margin-top:8px;">${data.code_check}</div>` : ""}
+        <div style="margin-top:10px;">${files}</div>
+      `;
+        $("chatBox").appendChild(div);
+        if (typeof hljs !== "undefined" && hljs && hljs.highlightAll) {
+          hljs.highlightAll();
+        }
+      }
+
+      function renderChat(chat) {
+        $("chatBox").innerHTML = "";
+        if (!Array.isArray(chat)) return;
+
+        const validMessages = chat.filter(
+          (item) =>
+            item &&
+            (item.role === "user" || item.role === "bot") &&
+            item.content &&
+            item.time,
+        );
+
+        validMessages.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = `msg-bubble ${item.role}-msg`;
+          const roleText = item.role === "user" ? "用户" : "助手";
+          div.innerHTML = `
+          <div class="msg-header">
+            ${roleText}
+            <span class="msg-time">${item.time}</span>
+          </div>
+          <div class="msg-content">${marked.parse(item.content)}</div>
+        `;
+          $("chatBox").appendChild(div);
+        });
+
+        if (typeof hljs !== "undefined" && hljs && hljs.highlightAll) {
+          hljs.highlightAll();
+        }
+        scrollBottom();
+      }
+
+      function updatePanel(data) {
+        $("taskId").textContent = data.now_task_id || data.bind_task_id || "-";
+        $("nowTok").textContent =
+          (data.input_tok || 0) + (data.output_tok || 0) || "-";
+        $("nowCost").textContent = (data.task_cost || 0).toFixed(4);
+        $("costTime").textContent = data.cost_time || "-";
+      }
+
+      async function exportChat() {
+        window.open("/export/chat", "_blank");
+      }
+
+      async function showHelp() {
+        const res = await fetch("/help");
+        const data = await res.json();
+        showToast(`模型：${data.model}`);
+      }
+
+      $("msgInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMsg();
+        }
+      });
+
+      window.onload = () => {
+        loadTasks();
+        const collapsed = localStorage.getItem("taskCollapsed") === "true";
+        if (collapsed) {
+          $("taskListContainer").classList.add("collapsed");
+          $("taskCollapseBtn").classList.add("rotated");
+        }
+        setInterval(loadTasks, 6000);
+      };
+    </script>
+  </body>
+</html>

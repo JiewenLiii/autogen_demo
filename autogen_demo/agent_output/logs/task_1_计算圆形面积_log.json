@@ -1,0 +1,14 @@
+{
+  "task_id": 1,
+  "time": "2026-05-07 11:42:29",
+  "task_name": "计算圆形面积",
+  "task_content": "计算圆形面积",
+  "status": "SUCCESS",
+  "message": "全流程执行成功",
+  "cost_time_sec": 29.31,
+  "input_tokens": 164,
+  "output_tokens": 343,
+  "total_tokens": 507,
+  "task_cost_yuan": 0.000597,
+  "price_rule": "输入:0.0005/千Token 输出:0.0015/千Token"
+}

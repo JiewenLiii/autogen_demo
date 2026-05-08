@@ -1,0 +1,9 @@
+{
+  "session_history": [
+    "用户：编写一个C++代码，计算长方形面积",
+    "助手：```python\n#include <iostream>\nusing namespace std;\n\nint main() {\n    double length, width;\n    cout << \"请输入长方形的长: \";\n    cin >> length;\n    cout << \"请输入长方形的宽: \";\n    cin >> width;\n    double area = length * width;\n    cout << \"长方形的面积为: \" << area << endl;\n    return 0;\n}\n```"
+  ],
+  "bind_task_id": 0,
+  "current_task_simple_name": "",
+  "current_task_type": "code"
+}

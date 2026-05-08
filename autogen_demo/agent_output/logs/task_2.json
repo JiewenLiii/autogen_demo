@@ -1,0 +1,13 @@
+{
+  "task_id": 2,
+  "time": "2026-05-07 11:24:16",
+  "task": "python deepseek_autogen_demo.py",
+  "status": "FAILED",
+  "message": "'ChatResult' object has no attribute 'usage'",
+  "cost_time_sec": 5.5,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "task_cost_yuan": 0.0,
+  "price_rule": "输入:0.0005/千Token 输出:0.0015/千Token"
+}
